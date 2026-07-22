@@ -41,13 +41,13 @@ export default function Home() {
   const [form, setForm] = useState({
     job: "产品运营", department: "创新产品研发部", city: "北京", level: "P6",
     intro: departments["创新产品研发部"], duties: samples.duties, requirements: samples.requirements,
-    highlights: "京东健康App核心增长方向\n覆盖问诊、购药、健康管理等丰富场景\n参与用户增长策略到落地的完整闭环",
+    highlight1: "京东健康App核心增长", highlight2: "覆盖多元健康场景", highlight3: "增长策略完整闭环",
     contact: "wangcongmeng.1", email: "wangcongmeng.1@jd.com"
   });
   const [busy, setBusy] = useState("");
   const duties = useMemo(() => compact(form.duties, 4), [form.duties]);
   const requirements = useMemo(() => compact(form.requirements, 6), [form.requirements]);
-  const highlights = useMemo(() => form.highlights.split(/\n+/).map(x => x.trim().replace(/^[-•·]\s*/, "")).filter(Boolean).slice(0, 3), [form.highlights]);
+  const highlights = useMemo(() => [form.highlight1, form.highlight2, form.highlight3].map(x => x.trim()).filter(Boolean), [form.highlight1, form.highlight2, form.highlight3]);
   const update = (key: string, value: string) => setForm(v => ({ ...v, [key]: value }));
   const selectDepartment = (name: string) => setForm(v => ({ ...v, department: name, intro: departments[name] || v.intro }));
 
@@ -89,7 +89,7 @@ export default function Home() {
           <div className="template-picker"><label>选择模板</label><div className="template-list"><button className={template === "classic" ? "selected" : ""} onClick={() => setTemplate("classic")}><i className="thumb classic"/>模板1</button><button className={template === "warm" ? "selected" : ""} onClick={() => setTemplate("warm")}><i className="thumb warm"/>模板2</button></div></div>
           <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
           <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>
-          <label className="field"><span>岗位亮点 <em>每行一条，最多展示 3 条</em></span><textarea rows={4} value={form.highlights} onChange={e=>update("highlights",e.target.value)} placeholder="例如：核心业务方向、成长机会、团队优势"/></label>
+          <div className="field highlight-fields"><span>岗位亮点 <em>每条最多 12 个字</em></span><div><HighlightField index={1} value={form.highlight1} onChange={v=>update("highlight1",v)}/><HighlightField index={2} value={form.highlight2} onChange={v=>update("highlight2",v)}/><HighlightField index={3} value={form.highlight3} onChange={v=>update("highlight3",v)}/></div></div>
           <label className="field"><span>岗位职责 <em>最多提取 4 条</em></span><textarea rows={7} value={form.duties} onChange={e=>update("duties",e.target.value)}/></label>
           <label className="field"><span>任职要求 <em>最多提取 6 条</em></span><textarea rows={7} value={form.requirements} onChange={e=>update("requirements",e.target.value)}/></label>
           <details><summary>投递信息</summary><div className="grid-fields compact"><Field label="京ME联系人" value={form.contact} onChange={v=>update("contact",v)}/><Field label="投递邮箱" value={form.email} onChange={v=>update("email",v)}/></div></details>
@@ -111,6 +111,8 @@ export default function Home() {
 }
 
 function Field({label,value,onChange}:{label:string,value:string,onChange:(v:string)=>void}){return <label className="field"><span>{label}</span><input value={value} onChange={e=>onChange(e.target.value)}/></label>}
+
+function HighlightField({index,value,onChange}:{index:number,value:string,onChange:(v:string)=>void}){return <label><span>{index}</span><input maxLength={12} value={value} onChange={e=>onChange(e.target.value)} placeholder={`亮点 ${index}`}/><small>{value.length}/12</small></label>}
 
 const Poster = ({ref,form,duties,requirements,highlights,template,format}:{ref:React.Ref<HTMLDivElement>,form:any,duties:string[],requirements:string[],highlights:string[],template:string,format:string}) => <div ref={ref} className={`poster ${template} ${format}`}>
   <div className="orbit"><b/></div><div className="poster-brand">京东健康</div><div className="poster-tag">内部活水岗位</div><div className="hero-title">{form.job||"岗位名称"}</div><div className="meta">{form.department}　·　{form.city}　·　{form.level}</div><div className="divider"/>
