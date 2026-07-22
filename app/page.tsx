@@ -37,14 +37,17 @@ function compact(text: string, limit: number) {
 export default function Home() {
   const posterRef = useRef<HTMLDivElement>(null);
   const [template, setTemplate] = useState("classic");
+  const [format, setFormat] = useState("story");
   const [form, setForm] = useState({
     job: "产品运营", department: "创新产品研发部", city: "北京", level: "P6",
     intro: departments["创新产品研发部"], duties: samples.duties, requirements: samples.requirements,
+    highlights: "京东健康App核心增长方向\n覆盖问诊、购药、健康管理等丰富场景\n参与用户增长策略到落地的完整闭环",
     contact: "wangcongmeng.1", email: "wangcongmeng.1@jd.com", jobCode: "XXXXXX"
   });
   const [busy, setBusy] = useState("");
   const duties = useMemo(() => compact(form.duties, 4), [form.duties]);
   const requirements = useMemo(() => compact(form.requirements, 6), [form.requirements]);
+  const highlights = useMemo(() => form.highlights.split(/\n+/).map(x => x.trim().replace(/^[-•·]\s*/, "")).filter(Boolean).slice(0, 3), [form.highlights]);
   const update = (key: string, value: string) => setForm(v => ({ ...v, [key]: value }));
   const selectDepartment = (name: string) => setForm(v => ({ ...v, department: name, intro: departments[name] || v.intro }));
 
@@ -52,7 +55,8 @@ export default function Home() {
     if (!posterRef.current) return;
     setBusy("png");
     const dataUrl = await toPng(posterRef.current, { pixelRatio: 2, cacheBust: true, backgroundColor: "#f7f5f3" });
-    const a = document.createElement("a"); a.href = dataUrl; a.download = `京东健康-${form.job}-${form.level}.png`; a.click();
+    const formatName = format === "story" ? "9x16" : format === "feed" ? "3x4" : "1x1";
+    const a = document.createElement("a"); a.href = dataUrl; a.download = `京东健康-${form.job}-${form.level}-${formatName}.png`; a.click();
     setBusy("");
   }
 
@@ -85,12 +89,20 @@ export default function Home() {
           <div className="template-picker"><label>选择模板</label><div className="template-list"><button className={template === "classic" ? "selected" : ""} onClick={() => setTemplate("classic")}><i className="thumb classic"/>模板1</button><button className={template === "warm" ? "selected" : ""} onClick={() => setTemplate("warm")}><i className="thumb warm"/>模板2</button></div></div>
           <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
           <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>
+          <label className="field"><span>岗位亮点 <em>每行一条，最多展示 3 条</em></span><textarea rows={4} value={form.highlights} onChange={e=>update("highlights",e.target.value)} placeholder="例如：核心业务方向、成长机会、团队优势"/></label>
           <label className="field"><span>岗位职责 <em>最多提取 4 条</em></span><textarea rows={7} value={form.duties} onChange={e=>update("duties",e.target.value)}/></label>
           <label className="field"><span>任职要求 <em>最多提取 6 条</em></span><textarea rows={7} value={form.requirements} onChange={e=>update("requirements",e.target.value)}/></label>
           <details><summary>投递信息</summary><div className="grid-fields compact"><Field label="京ME联系人" value={form.contact} onChange={v=>update("contact",v)}/><Field label="投递邮箱" value={form.email} onChange={v=>update("email",v)}/><Field label="岗位编号" value={form.jobCode} onChange={v=>update("jobCode",v)}/></div></details>
         </aside>
-        <section className="preview-zone"><div className="preview-head"><div><span className="step">02</span><h2>海报预览</h2></div><span className="scale-note">竖版 9:16 · 内容已自动压缩</span></div>
-          <Poster ref={posterRef} form={form} duties={duties} requirements={requirements} template={template}/>
+        <section className="preview-zone"><div className="preview-head"><div><span className="step">02</span><h2>成品预览</h2></div><span className="scale-note">不同尺寸会自动调整信息密度</span></div>
+          <div className="format-picker" role="group" aria-label="选择海报尺寸">
+            <button className={format === "story" ? "selected" : ""} onClick={()=>setFormat("story")}><b>9:16</b><span>完整长海报</span></button>
+            <button className={format === "feed" ? "selected" : ""} onClick={()=>setFormat("feed")}><b>3:4</b><span>论坛配图</span></button>
+            <button className={format === "square" ? "selected" : ""} onClick={()=>setFormat("square")}><b>1:1</b><span>群聊卡片</span></button>
+          </div>
+          <div className={`poster-stage ${format}`}>
+            <Poster ref={posterRef} form={form} duties={duties} requirements={requirements} highlights={highlights} template={template} format={format}/>
+          </div>
           <div className="actions"><button className="secondary" onClick={downloadPpt} disabled={!!busy}>{busy==="ppt"?"正在生成…":"下载可编辑 PPT"}</button><button className="primary" onClick={downloadPng} disabled={!!busy}>{busy==="png"?"正在生成…":"下载 PNG 海报"}</button></div>
         </section>
       </section>
@@ -100,10 +112,12 @@ export default function Home() {
 
 function Field({label,value,onChange}:{label:string,value:string,onChange:(v:string)=>void}){return <label className="field"><span>{label}</span><input value={value} onChange={e=>onChange(e.target.value)}/></label>}
 
-const Poster = ({ref,form,duties,requirements,template}:{ref:React.Ref<HTMLDivElement>,form:any,duties:string[],requirements:string[],template:string}) => <div ref={ref} className={`poster ${template}`}>
+const Poster = ({ref,form,duties,requirements,highlights,template,format}:{ref:React.Ref<HTMLDivElement>,form:any,duties:string[],requirements:string[],highlights:string[],template:string,format:string}) => <div ref={ref} className={`poster ${template} ${format}`}>
   <div className="orbit"><b/></div><div className="poster-brand">京东健康</div><div className="poster-tag">内部活水岗位</div><div className="hero-title">{form.job||"岗位名称"}</div><div className="meta">{form.department}　·　{form.city}　·　{form.level}</div><div className="divider"/>
   <div className="intro-card"><h3>关于{form.department}</h3><p>{form.intro}</p></div>
-  <PosterSection num="01" title="岗位职责" items={duties}/><PosterSection num="02" title="任职要求" items={requirements}/>
+  {highlights.length > 0 && <div className="highlight-card"><h3>岗位亮点</h3><div>{highlights.map((x,i)=><span key={i}>{x}</span>)}</div></div>}
+  <PosterSection num="01" title="岗位职责" items={format === "story" ? duties : duties.slice(0, format === "feed" ? 3 : 2)}/>
+  {format !== "square" && <PosterSection num="02" title="任职要求" items={format === "story" ? requirements : requirements.slice(0, 3)}/>}
   <div className="apply-card"><div className="apply-top"><h3>投递方式</h3><b>内部活水候选人优先</b></div><h4>京ME联系：{form.contact}</h4><p>简历请发送至：{form.email}<br/>邮件主题：活水申请＋岗位名称＋姓名　｜　岗位编号：{form.jobCode}</p></div><footer>让每一次流动，都通往更适合的位置</footer>
 </div>;
 
