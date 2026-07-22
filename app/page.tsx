@@ -11,7 +11,6 @@ const departments: Record<string, string> = {
   "消费与线下产品研发部": "聚焦体检、医美、正骨、口腔及高端健管等线下健康服务，以AI Native理念重构服务流程。团队通过数字化运营与服务标准化，建设线上线下一体化、全程可追溯的健康消费平台。",
   "企业产品研发部": "聚焦京东健康ToB业务，依托电商、技术、商品和服务供应链能力，为不同行业和客户提供以BBC商城为核心的解决方案，覆盖医疗金、创新药营销及保险创新等场景。",
   "智能算法部": "作为京东健康算法技术与AI中台核心团队，聚焦医疗大模型、AI Agent、搜索推荐和多模态理解，推动前沿算法在问诊、辅诊、健康管理及药品供应链等真实业务场景落地。",
-  "创新产品部": "聚焦ToC医疗健康创新产品探索，是公司面向消费者健康领域的前沿探索与产品孵化团队。团队以AI与大模型为核心驱动力，打造智能、精准、可及的健康解决方案，并通过健康APP、夜谜、京东GO等产品延伸健康服务边界。",
   "创新产品研发部": "聚焦ToC医疗健康创新产品探索，是公司面向消费者健康领域的前沿探索与产品孵化团队。团队以AI与大模型为核心驱动力，打造智能、精准、可及的健康解决方案，并通过健康APP、夜谜、京东GO等产品延伸健康服务边界。",
   "数据平台部": "负责京东健康全域数据能力建设，构建统一数据仓库、分析可视化和精细化用户画像体系。团队沉淀标准化、可信化、智能化的数据底座，以数据产品和服务赋能业务决策、运营提效与持续增长。",
   "共享平台部": "负责京东健康平台化能力建设，通过中台技术整合通用业务系统、底层技术及AI基础能力，为各业态提供标准化、可复用的中台服务。",
@@ -39,8 +38,8 @@ export default function Home() {
   const posterRef = useRef<HTMLDivElement>(null);
   const [template, setTemplate] = useState("classic");
   const [form, setForm] = useState({
-    job: "产品运营", department: "创新产品部", city: "北京", level: "P6",
-    intro: departments["创新产品部"], duties: samples.duties, requirements: samples.requirements,
+    job: "产品运营", department: "创新产品研发部", city: "北京", level: "P6",
+    intro: departments["创新产品研发部"], duties: samples.duties, requirements: samples.requirements,
     contact: "wangcongmeng.1", email: "wangcongmeng.1@jd.com", jobCode: "XXXXXX"
   });
   const [busy, setBusy] = useState("");
@@ -71,8 +70,8 @@ export default function Home() {
     text(form.job,.62,2.14,5.8,.68,36,"202124",true); text(`${form.department}  ·  ${form.city}  ·  ${form.level}`,.65,2.95,5.8,.28,15,"666A73");
     s.addShape(pptx.ShapeType.line,{x:.6,y:3.38,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:3.7,w:6.25,h:1.55,rectRadius:.1,fill:{color:"FFFFFF"},line:{color:"E9E4E1",width:1}}); text(`关于${form.department}`,.95,3.95,3.8,.28,17,red,true); text(form.intro,.95,4.28,5.5,.78,14,"202124");
-    text("01",.65,5.7,.38,.28,13,red,true); text("岗位职责",1.14,5.62,4.6,.45,24,"202124",true); s.addShape(pptx.ShapeType.line,{x:.6,y:6.15,w:.35,h:0,line:{color:red,width:3}}); text(duties.join("\n"),1.14,6.45,5.45,1.55,14,"666A73");
-    text("02",.65,8.26,.38,.28,13,red,true); text("任职要求",1.14,8.18,4.6,.45,24,"202124",true); s.addShape(pptx.ShapeType.line,{x:.6,y:8.71,w:.35,h:0,line:{color:red,width:3}}); text(requirements.join("\n"),1.14,9.0,5.45,1.65,14,"666A73");
+    text("01",.65,5.68,.42,.3,15,red,true); text("岗位职责",1.14,5.62,4.6,.45,24,"202124",true); s.addShape(pptx.ShapeType.line,{x:.6,y:6.06,w:.42,h:0,line:{color:red,width:4}}); text(duties.join("\n"),1.14,6.45,5.45,1.55,14,"666A73");
+    text("02",.65,8.24,.42,.3,15,red,true); text("任职要求",1.14,8.18,4.6,.45,24,"202124",true); s.addShape(pptx.ShapeType.line,{x:.6,y:8.62,w:.42,h:0,line:{color:red,width:4}}); text(requirements.join("\n"),1.14,9.0,5.45,1.65,14,"666A73");
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:10.85,w:6.25,h:1.55,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}}); text("投递方式",.95,11.05,1.5,.3,18,"FFFFFF",true); text("内部活水候选人优先",4.75,11.05,1.65,.25,11,"FFB3AE",true,"right"); text(`京ME联系：${form.contact}`,.95,11.45,3.5,.28,15,"FFFFFF",true); text(`简历请发送至：${form.email}\n邮件主题：活水申请＋岗位名称＋姓名  ｜  岗位编号：${form.jobCode}`,.95,11.78,5.5,.42,11,"DADCE0"); text("让每一次流动，都通往更适合的位置",.6,12.75,6.25,.25,11,"666A73",false,"center");
     await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}.pptx` }); setBusy("");
   }
@@ -83,8 +82,8 @@ export default function Home() {
       <section className="workspace">
         <aside className="panel editor">
           <div className="panel-title"><div><span className="step">01</span><h1>填写岗位信息</h1></div><p>填写内容后，右侧海报会实时更新。</p></div>
-          <div className="template-picker"><label>选择模板</label><div className="template-list"><button className={template === "classic" ? "selected" : ""} onClick={() => setTemplate("classic")}><i className="thumb classic"/>经典红白</button><button className={template === "warm" ? "selected" : ""} onClick={() => setTemplate("warm")}><i className="thumb warm"/>暖白简约</button></div></div>
-          <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).filter(x=>x!=="创新产品研发部").map(x=><option key={x}>{x}</option>)}</select></label></div>
+          <div className="template-picker"><label>选择模板</label><div className="template-list"><button className={template === "classic" ? "selected" : ""} onClick={() => setTemplate("classic")}><i className="thumb classic"/>模板1</button><button className={template === "warm" ? "selected" : ""} onClick={() => setTemplate("warm")}><i className="thumb warm"/>模板2</button></div></div>
+          <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
           <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>
           <label className="field"><span>岗位职责 <em>最多提取 4 条</em></span><textarea rows={7} value={form.duties} onChange={e=>update("duties",e.target.value)}/></label>
           <label className="field"><span>任职要求 <em>最多提取 6 条</em></span><textarea rows={7} value={form.requirements} onChange={e=>update("requirements",e.target.value)}/></label>
