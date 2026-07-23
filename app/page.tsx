@@ -97,7 +97,8 @@ export default function Home() {
         text(`京ME联系：${form.contact}`,.92,8.63,3.6,.24,13,"FFFFFF",true); text(`简历请发送至：${form.email}`,.92,8.94,5.3,.2,10,"DADCE0");
         text("让每一次流动，都通往更适合的位置",.6,9.62,6.25,.22,10,"666A73",false,"center");
       } else {
-        badge("岗位职责",.6,4.05); text(duties.slice(0,2).join("\n"),.6,4.58,6.1,.72,11,"666A73");
+        const squareDuties = duties.slice(0,2).map(x => x.replace(/^\d+\.\s*/, "").replace(/[，。；]+$/, "")).join("；") + "。";
+        badge("岗位职责",.6,4.05); text(squareDuties,.6,4.58,6.1,.72,11,"666A73");
         s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:6.25,h:1.05,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
         text("投递方式",.9,5.78,1.35,.24,15,"FFFFFF",true); text("内部活水候选人优先",4.8,5.78,1.65,.2,9,"FFB3AE",true,"right");
         text(`京ME联系：${form.contact}`,.9,6.1,3.5,.22,12,"FFFFFF",true); text(`简历请发送至：${form.email}`,.9,6.38,5.3,.18,9,"DADCE0");
@@ -153,9 +154,12 @@ const Poster = ({ref,form,duties,requirements,highlights,template,format}:{ref:R
   <div className="orbit"><b/></div><div className="poster-brand">京东健康</div><div className="poster-tag">内部活水岗位</div><div className="hero-title">{form.job||"岗位名称"}</div><div className="meta">{form.department}　·　{form.city}　·　{form.level}</div><div className="divider"/>
   <div className="intro-card"><h3>关于{form.department}</h3><p>{form.intro}</p></div>
   {highlights.length > 0 && <div className="highlight-card"><h3>岗位亮点</h3><div>{highlights.map((x,i)=><span key={i}><b>{String(i + 1).padStart(2, "0")}</b><em>{x}</em></span>)}</div></div>}
-  <PosterSection title="岗位职责" items={format === "story" ? duties : duties.slice(0, format === "feed" ? 3 : 2)}/>
+  <PosterSection title="岗位职责" items={format === "story" ? duties : duties.slice(0, format === "feed" ? 3 : 2)} paragraph={format === "square"}/>
   {format !== "square" && <PosterSection title="任职要求" items={format === "story" ? requirements : requirements.slice(0, 3)}/>}
   <div className="apply-card"><div className="apply-top"><h3>投递方式</h3><b>内部活水候选人优先</b></div><h4>京ME联系：{form.contact}</h4><p>简历请发送至：{form.email}</p></div><footer>让每一次流动，都通往更适合的位置</footer>
 </div>;
 
-function PosterSection({title,items}:{title:string,items:string[]}){return <section className="poster-section"><h3>{title}</h3><ol>{items.map((x,i)=><li key={i}>{x.replace(/^\d+\.\s*/,"")}</li>)}</ol></section>}
+function PosterSection({title,items,paragraph=false}:{title:string,items:string[],paragraph?:boolean}){
+  const cleanItems = items.map(x => x.replace(/^\d+\.\s*/, "").replace(/[，。；]+$/, ""));
+  return <section className={`poster-section${paragraph ? " paragraph" : ""}`}><h3>{title}</h3>{paragraph ? <p>{cleanItems.join("；")}。</p> : <ol>{items.map((x,i)=><li key={i}>{x.replace(/^\d+\.\s*/,"")}</li>)}</ol>}</section>
+}
