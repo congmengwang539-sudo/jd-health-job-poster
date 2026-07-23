@@ -74,8 +74,8 @@ export default function Home() {
     text(form.job,.62,2.14,5.8,.68,36,"202124",true); text(`${form.department}  ·  ${form.city}  ·  ${form.level}`,.65,2.95,5.8,.28,15,"666A73");
     s.addShape(pptx.ShapeType.line,{x:.6,y:3.38,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:3.7,w:6.25,h:1.55,rectRadius:.1,fill:{color:"FFFFFF"},line:{color:"E9E4E1",width:1}}); text(`关于${form.department}`,.95,3.95,3.8,.28,17,red,true); text(form.intro,.95,4.28,5.5,.78,14,"202124");
-    text("01",.65,5.68,.42,.3,15,red,true); text("岗位职责",1.14,5.62,4.6,.45,24,"202124",true); s.addShape(pptx.ShapeType.line,{x:.6,y:6.06,w:.42,h:0,line:{color:red,width:4}}); text(duties.join("\n"),1.14,6.45,5.45,1.55,14,"666A73");
-    text("02",.65,8.24,.42,.3,15,red,true); text("任职要求",1.14,8.18,4.6,.45,24,"202124",true); s.addShape(pptx.ShapeType.line,{x:.6,y:8.62,w:.42,h:0,line:{color:red,width:4}}); text(requirements.join("\n"),1.14,9.0,5.45,1.65,14,"666A73");
+    s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:1.65,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("岗位职责",.6,5.62,1.65,.48,19,red,true,"center"); text(duties.join("\n"),.6,6.3,5.95,1.65,14,"666A73");
+    s.addShape(pptx.ShapeType.roundRect,{x:.6,y:8.18,w:1.65,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("任职要求",.6,8.18,1.65,.48,19,red,true,"center"); text(requirements.join("\n"),.6,8.86,5.95,1.75,14,"666A73");
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:10.85,w:6.25,h:1.35,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}}); text("投递方式",.95,11.05,1.5,.3,18,"FFFFFF",true); text("内部活水候选人优先",4.75,11.05,1.65,.25,11,"FFB3AE",true,"right"); text(`京ME联系：${form.contact}`,.95,11.43,3.5,.28,15,"FFFFFF",true); text(`简历请发送至：${form.email}`,.95,11.78,5.5,.22,11,"DADCE0"); text("让每一次流动，都通往更适合的位置",.6,12.82,6.25,.25,11,"666A73",false,"center");
     await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}.pptx` }); setBusy("");
   }
@@ -118,9 +118,9 @@ const Poster = ({ref,form,duties,requirements,highlights,template,format}:{ref:R
   <div className="orbit"><b/></div><div className="poster-brand">京东健康</div><div className="poster-tag">内部活水岗位</div><div className="hero-title">{form.job||"岗位名称"}</div><div className="meta">{form.department}　·　{form.city}　·　{form.level}</div><div className="divider"/>
   <div className="intro-card"><h3>关于{form.department}</h3><p>{form.intro}</p></div>
   {highlights.length > 0 && <div className="highlight-card"><h3>岗位亮点</h3><div>{highlights.map((x,i)=><span key={i}>{x}</span>)}</div></div>}
-  <PosterSection num="01" title="岗位职责" items={format === "story" ? duties : duties.slice(0, format === "feed" ? 3 : 2)}/>
-  {format !== "square" && <PosterSection num="02" title="任职要求" items={format === "story" ? requirements : requirements.slice(0, 3)}/>}
+  <PosterSection title="岗位职责" items={format === "story" ? duties : duties.slice(0, format === "feed" ? 3 : 2)}/>
+  {format !== "square" && <PosterSection title="任职要求" items={format === "story" ? requirements : requirements.slice(0, 3)}/>}
   <div className="apply-card" style={{ marginTop: format === "story" ? 32 : format === "feed" ? 18 : 12 }}><div className="apply-top"><h3>投递方式</h3><b>内部活水候选人优先</b></div><h4>京ME联系：{form.contact}</h4><p>简历请发送至：{form.email}</p></div><footer style={{ marginTop: format === "story" ? 18 : format === "feed" ? 10 : 8 }}>让每一次流动，都通往更适合的位置</footer>
 </div>;
 
-function PosterSection({num,title,items}:{num:string,title:string,items:string[]}){return <section className="poster-section"><div className="section-label"><span>{num}</span><i/></div><div><h3>{title}</h3><ol>{items.map((x,i)=><li key={i}>{x.replace(/^\d+\.\s*/,"")}</li>)}</ol></div></section>}
+function PosterSection({title,items}:{title:string,items:string[]}){return <section className="poster-section"><h3>{title}</h3><ol>{items.map((x,i)=><li key={i}>{x.replace(/^\d+\.\s*/,"")}</li>)}</ol></section>}
