@@ -34,14 +34,11 @@ function compact(text: string, limit: number) {
   });
 }
 
-function conciseItems(items: string[], limit = 32) {
+function conciseItems(items: string[], limit = 42) {
   return items.map((item, i) => {
     const body = item.replace(/^\d+\.\s*/, "").replace(/[；;。]+$/, "");
     if (body.length <= limit) return `${i + 1}. ${body}${i === items.length - 1 ? "。" : "；"}`;
-    const window = body.slice(0, limit);
-    const punctuation = Math.max(window.lastIndexOf("，"), window.lastIndexOf("、"));
-    const short = punctuation >= 18 ? window.slice(0, punctuation) : window;
-    return `${i + 1}. ${short}…`;
+    return `${i + 1}. ${body.slice(0, limit)}…`;
   });
 }
 
@@ -60,7 +57,7 @@ export default function Home() {
   const requirements = useMemo(() => compact(form.requirements, 6), [form.requirements]);
   const feedDuties = useMemo(() => conciseItems(duties.slice(0, 4)), [duties]);
   const feedRequirements = useMemo(() => conciseItems(requirements.slice(0, 4)), [requirements]);
-  const feedDense = useMemo(() => [...feedDuties, ...feedRequirements].some(x => x.replace(/^\d+\.\s*/, "").length > 28), [feedDuties, feedRequirements]);
+  const feedDense = useMemo(() => [...feedDuties, ...feedRequirements].some(x => x.replace(/^\d+\.\s*/, "").length > 36), [feedDuties, feedRequirements]);
   const highlights = useMemo(() => [form.highlight1, form.highlight2, form.highlight3].map(x => x.trim()).filter(Boolean), [form.highlight1, form.highlight2, form.highlight3]);
   const update = (key: string, value: string) => setForm(v => ({ ...v, [key]: value }));
   const selectDepartment = (name: string) => setForm(v => ({ ...v, department: name, intro: departments[name] || v.intro }));
@@ -141,8 +138,8 @@ export default function Home() {
           <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
           {format === "story" && <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>}
           <div className="field highlight-fields"><span>岗位亮点 <em>每条最多 12 个字</em></span><div><HighlightField index={1} value={form.highlight1} onChange={v=>update("highlight1",v)}/><HighlightField index={2} value={form.highlight2} onChange={v=>update("highlight2",v)}/><HighlightField index={3} value={form.highlight3} onChange={v=>update("highlight3",v)}/></div></div>
-          <label className="field"><span>岗位职责 <em>{format === "square" ? "精简展示，最多提取 2 条" : format === "feed" ? "展示 4 条，每条建议不超过 30 字" : "最多提取 4 条"}</em></span><textarea rows={format === "square" ? 4 : 7} value={form.duties} onChange={e=>update("duties",e.target.value)}/></label>
-          {format !== "square" && <label className="field"><span>任职要求 <em>{format === "feed" ? "展示 4 条，每条建议不超过 30 字" : "最多提取 6 条"}</em></span><textarea rows={7} value={form.requirements} onChange={e=>update("requirements",e.target.value)}/></label>}
+          <label className="field"><span>岗位职责 <em>{format === "square" ? "精简展示，最多提取 2 条" : format === "feed" ? "展示 4 条，每条建议不超过 40 字" : "最多提取 4 条"}</em></span><textarea rows={format === "square" ? 4 : 7} value={form.duties} onChange={e=>update("duties",e.target.value)}/></label>
+          {format !== "square" && <label className="field"><span>任职要求 <em>{format === "feed" ? "展示 4 条，每条建议不超过 40 字" : "最多提取 6 条"}</em></span><textarea rows={7} value={form.requirements} onChange={e=>update("requirements",e.target.value)}/></label>}
           <details><summary>投递信息</summary><div className="grid-fields compact"><Field label="京ME联系人" value={form.contact} onChange={v=>update("contact",v)}/><Field label="投递邮箱" value={form.email} onChange={v=>update("email",v)}/></div></details>
         </aside>
         <section className="preview-zone"><div className="preview-head"><div><span className="step">02</span><h2>成品预览</h2></div><span className="scale-note">不同尺寸会自动调整信息密度</span></div>
