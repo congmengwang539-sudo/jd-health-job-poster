@@ -63,13 +63,48 @@ export default function Home() {
   async function downloadPpt() {
     setBusy("ppt");
     const pptx = new PptxGenJS();
-    pptx.defineLayout({ name: "POSTER", width: 7.5, height: 13.333 }); pptx.layout = "POSTER";
+    const formatName = format === "story" ? "9x16" : format === "feed" ? "3x4" : "1x1";
+    const slideHeight = format === "story" ? 13.333 : format === "feed" ? 10 : 7.5;
+    pptx.defineLayout({ name: "POSTER", width: 7.5, height: slideHeight }); pptx.layout = "POSTER";
     pptx.author = "京东健康活水岗位海报生成器"; pptx.subject = `${form.job}招聘海报`; pptx.title = `${form.job}｜${form.department}`;
     const s = pptx.addSlide(); const red = template === "classic" ? "E1251B" : "C92922"; const bg = template === "classic" ? "F7F5F3" : "FFF9F7";
     s.background = { color: bg };
     s.addShape(pptx.ShapeType.ellipse, { x: 5.35, y: -0.6, w: 2.9, h: 2.9, fill: { color: "FFF0EE" }, line: { color: "FFF0EE" } });
     s.addShape(pptx.ShapeType.ellipse, { x: 6.5, y: -0.3, w: 1.35, h: 1.35, fill: { color: red }, line: { color: red } });
     const text = (t:string,x:number,y:number,w:number,h:number,size:number,color="202124",bold=false,align:"left"|"center"|"right"="left") => s.addText(t,{x,y,w,h,fontFace:"Microsoft YaHei",fontSize:size,color,bold,margin:0,breakLine:false,fit:"shrink",valign:"mid",align});
+    const badge = (label:string,x:number,y:number,w=1.5) => { s.addShape(pptx.ShapeType.roundRect,{x,y,w,h:.42,rectRadius:.1,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text(label,x,y,w,.42,17,red,true,"center"); };
+    const addHighlights = (y:number) => {
+      text("💡 岗位亮点",.6,y,1.35,.34,13,red,true,"center");
+      highlights.slice(0,3).forEach((item,i) => {
+        const x = .6 + i * 2.08;
+        s.addShape(pptx.ShapeType.roundRect,{x,y:y+.48,w:1.88,h:.46,rectRadius:.08,fill:{color:"FFF9F8"},line:{color:"F4D8D5",width:1}});
+        text(`${String(i+1).padStart(2,"0")}  ${item}`,x+.08,y+.48,1.72,.46,10,i===0?red:"303238",true,"center");
+      });
+    };
+    if (format !== "story") {
+      text("京东健康",.58,.34,3.1,.48,28,red,true);
+      s.addShape(pptx.ShapeType.roundRect,{x:.58,y:1.02,w:2.15,h:.45,rectRadius:.1,fill:{color:red},line:{color:red}});
+      text("内部活水岗位",.58,1.02,2.15,.45,18,"FFFFFF",true,"center");
+      text(form.job,.6,1.65,5.9,.58,format === "feed" ? 32 : 29,"202124",true);
+      text(`${form.department}  ·  ${form.city}  ·  ${form.level}`,.62,2.32,5.9,.24,13,"666A73");
+      s.addShape(pptx.ShapeType.line,{x:.6,y:2.7,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
+      addHighlights(2.9);
+      if (format === "feed") {
+        badge("岗位职责",.6,4.12); text(duties.slice(0,3).join("\n"),.6,4.7,6.1,1.05,12,"666A73");
+        badge("任职要求",.6,5.95); text(requirements.slice(0,3).join("\n"),.6,6.53,6.1,1.05,12,"666A73");
+        s.addShape(pptx.ShapeType.roundRect,{x:.6,y:8.1,w:6.25,h:1.15,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
+        text("投递方式",.92,8.28,1.4,.25,16,"FFFFFF",true); text("内部活水候选人优先",4.8,8.28,1.65,.22,10,"FFB3AE",true,"right");
+        text(`京ME联系：${form.contact}`,.92,8.63,3.6,.24,13,"FFFFFF",true); text(`简历请发送至：${form.email}`,.92,8.94,5.3,.2,10,"DADCE0");
+        text("让每一次流动，都通往更适合的位置",.6,9.62,6.25,.22,10,"666A73",false,"center");
+      } else {
+        badge("岗位职责",.6,4.05); text(duties.slice(0,2).join("\n"),.6,4.58,6.1,.72,11,"666A73");
+        s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:6.25,h:1.05,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
+        text("投递方式",.9,5.78,1.35,.24,15,"FFFFFF",true); text("内部活水候选人优先",4.8,5.78,1.65,.2,9,"FFB3AE",true,"right");
+        text(`京ME联系：${form.contact}`,.9,6.1,3.5,.22,12,"FFFFFF",true); text(`简历请发送至：${form.email}`,.9,6.38,5.3,.18,9,"DADCE0");
+        text("让每一次流动，都通往更适合的位置",.6,7.12,6.25,.2,9,"666A73",false,"center");
+      }
+      await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}-${formatName}.pptx` }); setBusy(""); return;
+    }
     text("京东健康",.62,.42,3.2,.55,32,red,true); s.addShape(pptx.ShapeType.roundRect,{x:.6,y:1.36,w:2.55,h:.52,rectRadius:.12,fill:{color:red},line:{color:red}}); text("内部活水岗位",.6,1.36,2.55,.52,21,"FFFFFF",true,"center");
     text(form.job,.62,2.14,5.8,.68,36,"202124",true); text(`${form.department}  ·  ${form.city}  ·  ${form.level}`,.65,2.95,5.8,.28,15,"666A73");
     s.addShape(pptx.ShapeType.line,{x:.6,y:3.38,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
@@ -77,7 +112,7 @@ export default function Home() {
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:1.65,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("岗位职责",.6,5.62,1.65,.48,19,red,true,"center"); text(duties.join("\n"),.6,6.3,5.95,1.65,14,"666A73");
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:8.18,w:1.65,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("任职要求",.6,8.18,1.65,.48,19,red,true,"center"); text(requirements.join("\n"),.6,8.86,5.95,1.75,14,"666A73");
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:10.85,w:6.25,h:1.35,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}}); text("投递方式",.95,11.05,1.5,.3,18,"FFFFFF",true); text("内部活水候选人优先",4.75,11.05,1.65,.25,11,"FFB3AE",true,"right"); text(`京ME联系：${form.contact}`,.95,11.43,3.5,.28,15,"FFFFFF",true); text(`简历请发送至：${form.email}`,.95,11.78,5.5,.22,11,"DADCE0"); text("让每一次流动，都通往更适合的位置",.6,12.82,6.25,.25,11,"666A73",false,"center");
-    await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}.pptx` }); setBusy("");
+    await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}-${formatName}.pptx` }); setBusy("");
   }
 
   return (
@@ -103,7 +138,7 @@ export default function Home() {
           <div className={`poster-stage ${format}`}>
             <Poster ref={posterRef} form={form} duties={duties} requirements={requirements} highlights={highlights} template={template} format={format}/>
           </div>
-          <div className="actions"><button className="secondary" onClick={downloadPpt} disabled={!!busy}>{busy==="ppt"?"正在生成…":"下载可编辑 PPT"}</button><button className="primary" onClick={downloadPng} disabled={!!busy}>{busy==="png"?"正在生成…":"下载 PNG 海报"}</button></div>
+          <div className="actions"><button className="secondary" onClick={downloadPpt} disabled={!!busy}>{busy==="ppt"?"正在生成…":"下载当前尺寸 PPT"}</button><button className="primary" onClick={downloadPng} disabled={!!busy}>{busy==="png"?"正在生成…":"下载 PNG 海报"}</button></div>
         </section>
       </section>
     </main>
