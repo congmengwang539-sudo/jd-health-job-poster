@@ -120,7 +120,7 @@ const Poster = ({ref,form,duties,requirements,highlights,template,format}:{ref:R
   {highlights.length > 0 && <div className="highlight-card"><h3>岗位亮点</h3><div>{highlights.map((x,i)=><span key={i}><b>{String(i + 1).padStart(2, "0")}</b><em>{x}</em></span>)}</div></div>}
   <PosterSection title="岗位职责" items={format === "story" ? duties : duties.slice(0, format === "feed" ? 3 : 2)}/>
   {format !== "square" && <PosterSection title="任职要求" items={format === "story" ? requirements : requirements.slice(0, 3)}/>}
-  <div className="apply-card" style={{ marginTop: format === "story" ? 32 : format === "feed" ? 18 : 12 }}><div className="apply-top"><h3>投递方式</h3><b>内部活水候选人优先</b></div><h4>京ME联系：{form.contact}</h4><p>简历请发送至：{form.email}</p></div><footer style={{ marginTop: format === "story" ? 18 : format === "feed" ? 10 : 8 }}>让每一次流动，都通往更适合的位置</footer>
+  <div className="apply-card"><div className="apply-top"><h3>投递方式</h3><b>内部活水候选人优先</b></div><h4>京ME联系：{form.contact}</h4><p>简历请发送至：{form.email}</p></div><footer>让每一次流动，都通往更适合的位置</footer>
 </div>;
 
 function PosterSection({title,items}:{title:string,items:string[]}){return <section className="poster-section"><h3>{title}</h3><ol>{items.map((x,i)=><li key={i}>{x.replace(/^\d+\.\s*/,"")}</li>)}</ol></section>}
