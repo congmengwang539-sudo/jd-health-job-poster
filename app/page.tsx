@@ -139,7 +139,7 @@ export default function Home() {
           <div className="panel-title"><div><span className="step">01</span><h1>填写岗位信息</h1></div><p>填写内容后，右侧海报会实时更新。</p></div>
           <div className="template-picker"><label>选择模板</label><div className="template-list"><button className={template === "classic" ? "selected" : ""} onClick={() => setTemplate("classic")}><i className="thumb classic"/>模板1</button><button className={template === "warm" ? "selected" : ""} onClick={() => setTemplate("warm")}><i className="thumb warm"/>模板2</button></div></div>
           <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
-          {format !== "square" && <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>}
+          {format === "story" && <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>}
           <div className="field highlight-fields"><span>岗位亮点 <em>每条最多 12 个字</em></span><div><HighlightField index={1} value={form.highlight1} onChange={v=>update("highlight1",v)}/><HighlightField index={2} value={form.highlight2} onChange={v=>update("highlight2",v)}/><HighlightField index={3} value={form.highlight3} onChange={v=>update("highlight3",v)}/></div></div>
           <label className="field"><span>岗位职责 <em>{format === "square" ? "精简展示，最多提取 2 条" : format === "feed" ? "展示 4 条，每条建议不超过 30 字" : "最多提取 4 条"}</em></span><textarea rows={format === "square" ? 4 : 7} value={form.duties} onChange={e=>update("duties",e.target.value)}/></label>
           {format !== "square" && <label className="field"><span>任职要求 <em>{format === "feed" ? "展示 4 条，每条建议不超过 30 字" : "最多提取 6 条"}</em></span><textarea rows={7} value={form.requirements} onChange={e=>update("requirements",e.target.value)}/></label>}
@@ -169,8 +169,13 @@ const Poster = ({ref,form,duties,requirements,highlights,template,format,dense=f
   <div className="orbit"><b/></div><div className="poster-brand">京东健康</div><div className="poster-tag">内部活水岗位</div><div className="hero-title">{form.job||"岗位名称"}</div><div className="meta">{form.department}　·　{form.city}　·　{form.level}</div><div className="divider"/>
   <div className="intro-card"><h3>关于{form.department}</h3><p>{form.intro}</p></div>
   {highlights.length > 0 && <div className="highlight-card"><h3>岗位亮点</h3><div>{highlights.map((x,i)=><span key={i}><b>{String(i + 1).padStart(2, "0")}</b><em>{x}</em></span>)}</div></div>}
-  <PosterSection title="岗位职责" items={format === "story" ? duties : duties.slice(0, format === "feed" ? 4 : 2)} paragraph={format === "square"}/>
-  {format !== "square" && <PosterSection title="任职要求" items={format === "story" ? requirements : requirements.slice(0, format === "feed" ? 4 : 3)}/>}
+  {format === "feed" ? <div className="feed-details">
+    <PosterSection title="岗位职责" items={duties.slice(0, 4)}/>
+    <PosterSection title="任职要求" items={requirements.slice(0, 4)}/>
+  </div> : <>
+    <PosterSection title="岗位职责" items={format === "story" ? duties : duties.slice(0, 2)} paragraph={format === "square"}/>
+    {format !== "square" && <PosterSection title="任职要求" items={requirements}/>}
+  </>}
   <div className="apply-card"><div className="apply-top"><h3>投递方式</h3><b>内部活水候选人优先</b></div><h4>京ME联系：{form.contact}</h4><p>简历请发送至：{form.email}</p></div><footer>让每一次流动，都通往更适合的位置</footer>
 </div>;
 
