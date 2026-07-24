@@ -22,10 +22,13 @@ const samples = {
   description: "负责核心业务或项目，制定策略并推动落地，通过用户与业务数据分析持续优化关键指标，联动产品、研发、设计等团队推进项目并完成效果复盘。希望你具备相关岗位经验，熟悉业务方法和工作流程，拥有良好的数据分析、沟通协作与项目推动能力，目标导向、执行力强，具备相关行业或项目经验者优先。"
 };
 
+const CUSTOM_DEPARTMENT = "__custom__";
+
 export default function Home() {
   const posterRef = useRef<HTMLDivElement>(null);
   const [template, setTemplate] = useState("warm");
   const [format, setFormat] = useState("feed");
+  const [departmentChoice, setDepartmentChoice] = useState("创新产品研发部");
   const [form, setForm] = useState({
     job: "产品运营", department: "创新产品研发部", city: "北京", level: "P6",
     intro: departments["创新产品研发部"], description: samples.description,
@@ -37,7 +40,14 @@ export default function Home() {
   const descriptionDense = description.length > (format === "story" ? 240 : format === "feed" ? 160 : 90);
   const highlights = useMemo(() => [form.highlight1, form.highlight2, form.highlight3].map(x => x.trim()).filter(Boolean), [form.highlight1, form.highlight2, form.highlight3]);
   const update = (key: string, value: string) => setForm(v => ({ ...v, [key]: value }));
-  const selectDepartment = (name: string) => setForm(v => ({ ...v, department: name, intro: departments[name] || v.intro }));
+  const selectDepartment = (name: string) => {
+    setDepartmentChoice(name);
+    if (name === CUSTOM_DEPARTMENT) {
+      setForm(v => ({ ...v, department: "", intro: "" }));
+      return;
+    }
+    setForm(v => ({ ...v, department: name, intro: departments[name] || "" }));
+  };
 
   async function downloadPng() {
     if (!posterRef.current) return;
@@ -108,8 +118,9 @@ export default function Home() {
         <aside className="panel editor">
           <div className="panel-title"><div><span className="step">01</span><h1>填写岗位信息</h1></div><p>填写内容后，右侧海报会实时更新。</p></div>
           <div className="template-picker"><label>选择模板</label><div className="template-list"><button className={template === "warm" ? "selected" : ""} onClick={() => setTemplate("warm")}><i className="thumb warm"/>默认模板</button><button className={template === "classic" ? "selected" : ""} onClick={() => setTemplate("classic")}><i className="thumb classic"/>模板2</button></div></div>
-          <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
-          {format === "story" && <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>}
+          <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={departmentChoice} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x} value={x}>{x}</option>)}<option value={CUSTOM_DEPARTMENT}>自定义部门</option></select></label></div>
+          {departmentChoice === CUSTOM_DEPARTMENT && <Field label="自定义部门名称" value={form.department} onChange={v=>update("department",v)}/>}
+          {format === "story" && <label className="field"><span>部门介绍 <em>{departmentChoice === CUSTOM_DEPARTMENT ? "请自行填写" : "已自动匹配，可编辑"}</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>}
           <div className="field highlight-fields"><span>岗位亮点 <em>每条最多 12 个字</em></span><div><HighlightField index={1} value={form.highlight1} onChange={v=>update("highlight1",v)}/><HighlightField index={2} value={form.highlight2} onChange={v=>update("highlight2",v)}/><HighlightField index={3} value={form.highlight3} onChange={v=>update("highlight3",v)}/></div></div>
           {format !== "square" && <label className="field"><span>岗位介绍&要求 <em>{format === "story" ? "建议不超过 300 字" : "建议不超过 200 字"}</em></span><textarea rows={9} value={form.description} onChange={e=>update("description",e.target.value)} placeholder="请综合描述岗位工作内容、岗位价值及任职要求，无需分条。"/></label>}
           <section className="delivery-fields"><h3>投递信息</h3><div className="grid-fields compact"><Field label="京ME联系人" value={form.contact} onChange={v=>update("contact",v)}/><Field label="投递邮箱" value={form.email} onChange={v=>update("email",v)}/></div></section>
