@@ -22,13 +22,9 @@ const samples = {
   description: "负责核心业务或项目，制定策略并推动落地，通过用户与业务数据分析持续优化关键指标，联动产品、研发、设计等团队推进项目并完成效果复盘。希望你具备相关岗位经验，熟悉业务方法和工作流程，拥有良好的数据分析、沟通协作与项目推动能力，目标导向、执行力强，具备相关行业或项目经验者优先。"
 };
 
-function paragraph(text: string) {
-  return text.replace(/\r/g, "").split(/\n+/).map(x => x.trim().replace(/^\d+[.、]\s*/, "").replace(/[；;]+$/, "")).filter(Boolean).join("；");
-}
-
 export default function Home() {
   const posterRef = useRef<HTMLDivElement>(null);
-  const [template, setTemplate] = useState("classic");
+  const [template, setTemplate] = useState("warm");
   const [format, setFormat] = useState("feed");
   const [form, setForm] = useState({
     job: "产品运营", department: "创新产品研发部", city: "北京", level: "P6",
@@ -37,7 +33,7 @@ export default function Home() {
     contact: "wangcongmeng.1", email: "wangcongmeng.1@jd.com"
   });
   const [busy, setBusy] = useState("");
-  const description = useMemo(() => paragraph(form.description), [form.description]);
+  const description = form.description;
   const descriptionDense = description.length > (format === "story" ? 240 : format === "feed" ? 160 : 90);
   const highlights = useMemo(() => [form.highlight1, form.highlight2, form.highlight3].map(x => x.trim()).filter(Boolean), [form.highlight1, form.highlight2, form.highlight3]);
   const update = (key: string, value: string) => setForm(v => ({ ...v, [key]: value }));
@@ -80,7 +76,7 @@ export default function Home() {
       text(form.job,.6,1.65,5.9,.58,format === "feed" ? 32 : 29,"202124",true);
       text(`${form.department}  ·  ${form.city}  ·  ${form.level}`,.62,2.32,5.9,.24,13,"666A73");
       s.addShape(pptx.ShapeType.line,{x:.6,y:2.7,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
-      addHighlights(format === "square" ? 3.08 : 2.9);
+      addHighlights(format === "square" ? 3 : 2.9);
       if (format === "feed") {
         badge("岗位介绍&要求",.6,4.05,2.15); text(description,.6,4.65,6.1,2.7,descriptionDense?10:11,"666A73");
         s.addShape(pptx.ShapeType.roundRect,{x:.6,y:8.1,w:6.25,h:1.15,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
@@ -111,7 +107,7 @@ export default function Home() {
       <section className="workspace">
         <aside className="panel editor">
           <div className="panel-title"><div><span className="step">01</span><h1>填写岗位信息</h1></div><p>填写内容后，右侧海报会实时更新。</p></div>
-          <div className="template-picker"><label>选择模板</label><div className="template-list"><button className={template === "classic" ? "selected" : ""} onClick={() => setTemplate("classic")}><i className="thumb classic"/>模板1</button><button className={template === "warm" ? "selected" : ""} onClick={() => setTemplate("warm")}><i className="thumb warm"/>模板2</button></div></div>
+          <div className="template-picker"><label>选择模板</label><div className="template-list"><button className={template === "warm" ? "selected" : ""} onClick={() => setTemplate("warm")}><i className="thumb warm"/>模板2</button><button className={template === "classic" ? "selected" : ""} onClick={() => setTemplate("classic")}><i className="thumb classic"/>模板1</button></div></div>
           <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
           {format === "story" && <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>}
           <div className="field highlight-fields"><span>岗位亮点 <em>每条最多 12 个字</em></span><div><HighlightField index={1} value={form.highlight1} onChange={v=>update("highlight1",v)}/><HighlightField index={2} value={form.highlight2} onChange={v=>update("highlight2",v)}/><HighlightField index={3} value={form.highlight3} onChange={v=>update("highlight3",v)}/></div></div>
