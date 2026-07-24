@@ -80,7 +80,7 @@ export default function Home() {
       text(form.job,.6,1.65,5.9,.58,format === "feed" ? 32 : 29,"202124",true);
       text(`${form.department}  ·  ${form.city}  ·  ${form.level}`,.62,2.32,5.9,.24,13,"666A73");
       s.addShape(pptx.ShapeType.line,{x:.6,y:2.7,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
-      addHighlights(2.9);
+      addHighlights(format === "square" ? 3.08 : 2.9);
       if (format === "feed") {
         badge("岗位介绍&要求",.6,4.05,2.15); text(description,.6,4.65,6.1,2.7,descriptionDense?10:11,"666A73");
         s.addShape(pptx.ShapeType.roundRect,{x:.6,y:8.1,w:6.25,h:1.15,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
@@ -88,10 +88,10 @@ export default function Home() {
         text(`京ME联系：${form.contact}`,.92,8.63,3.6,.24,13,"FFFFFF",true); text(`简历请发送至：${form.email}`,.92,8.94,5.3,.2,10,"DADCE0");
         text("让每一次流动，都通往更适合的位置",.6,9.62,6.25,.22,10,"666A73",false,"center");
       } else {
-        s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.08,w:6.25,h:1.15,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
-        text("投递方式",.9,5.26,1.35,.24,15,"FFFFFF",true); text("内部活水候选人优先",4.8,5.26,1.65,.2,9,"FFB3AE",true,"right");
-        text(`京ME联系：${form.contact}`,.9,5.6,3.5,.22,12,"FFFFFF",true); text(`简历请发送至：${form.email}`,.9,5.9,5.3,.18,9,"DADCE0");
-        text("让每一次流动，都通往更适合的位置",.6,6.92,6.25,.2,9,"666A73",false,"center");
+        s.addShape(pptx.ShapeType.roundRect,{x:.6,y:4.72,w:6.25,h:1.15,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
+        text("投递方式",.9,4.9,1.35,.24,15,"FFFFFF",true); text("内部活水候选人优先",4.8,4.9,1.65,.2,9,"FFB3AE",true,"right");
+        text(`京ME联系：${form.contact}`,.9,5.24,3.5,.22,12,"FFFFFF",true); text(`简历请发送至：${form.email}`,.9,5.54,5.3,.18,9,"DADCE0");
+        text("让每一次流动，都通往更适合的位置",.6,6.72,6.25,.2,9,"666A73",false,"center");
       }
       await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}-${formatName}.pptx` }); setBusy(""); return;
     }
