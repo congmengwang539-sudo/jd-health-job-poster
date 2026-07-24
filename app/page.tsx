@@ -29,7 +29,7 @@ function paragraph(text: string) {
 export default function Home() {
   const posterRef = useRef<HTMLDivElement>(null);
   const [template, setTemplate] = useState("classic");
-  const [format, setFormat] = useState("story");
+  const [format, setFormat] = useState("feed");
   const [form, setForm] = useState({
     job: "产品运营", department: "创新产品研发部", city: "北京", level: "P6",
     intro: departments["创新产品研发部"], description: samples.description,
@@ -121,8 +121,8 @@ export default function Home() {
         </aside>
         <section className="preview-zone"><div className="preview-head"><div><span className="step">02</span><h2>成品预览</h2></div><span className="scale-note">不同尺寸会自动调整信息密度</span></div>
           <div className="format-picker" role="group" aria-label="选择海报尺寸">
-            <button className={format === "story" ? "selected" : ""} onClick={()=>setFormat("story")}><b>9:16</b><span>完整长海报</span></button>
             <button className={format === "feed" ? "selected" : ""} onClick={()=>setFormat("feed")}><b>3:4</b><span>论坛配图</span></button>
+            <button className={format === "story" ? "selected" : ""} onClick={()=>setFormat("story")}><b>9:16</b><span>完整长海报</span></button>
             <button className={format === "square" ? "selected" : ""} onClick={()=>setFormat("square")}><b>1:1</b><span>群聊卡片</span></button>
           </div>
           <div className={`poster-stage ${format}`}>
