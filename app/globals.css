@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+body .poster .poster-section.unified p{margin:0;color:#6b707b;text-align:left;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+body .poster.poster.story .poster-section.unified{min-height:0!important;max-height:220px;overflow:hidden}
+body .poster.poster.story .poster-section.unified p{font-size:8.2px;line-height:1.55;-webkit-line-clamp:14}
+body .poster.poster.story.dense .poster-section.unified p{font-size:7.5px;line-height:1.48}
+body .poster.poster.feed .poster-section.unified{position:absolute;left:32px;right:32px;top:264px;bottom:118px;margin:0!important;min-height:0!important;overflow:hidden}
+body .poster.poster.feed .poster-section.unified p{font-size:7.35px;line-height:1.5;-webkit-line-clamp:11}
+body .poster.poster.feed.dense .poster-section.unified p{font-size:6.85px;line-height:1.42}
+body .poster.poster.square .poster-section.unified{min-height:0!important;max-height:68px;overflow:hidden}
+body .poster.poster.square .poster-section.unified p{font-size:7.3px;line-height:1.45;-webkit-line-clamp:5}
+body .poster.poster.square.dense .poster-section.unified p{font-size:6.8px;line-height:1.38}
 body .poster.poster.feed .highlight-card+.poster-section{margin-top:11px!important}
 body .poster.poster.feed .poster-section{min-height:0!important;margin-top:0!important}
 body .poster.poster.feed .poster-section+.poster-section{margin-top:9px!important}

@@ -19,27 +19,11 @@ const departments: Record<string, string> = {
 };
 
 const samples = {
-  duties: "1. 负责核心业务或项目，制定策略并推动落地；\n2. 分析用户与业务数据，持续优化关键指标；\n3. 联动产品、研发、设计等团队推进项目；\n4. 建立目标拆解、验证和效果复盘机制。",
-  requirements: "1. 本科及以上学历，具备相关岗位经验；\n2. 熟悉业务方法和工作流程；\n3. 具备数据分析、沟通协作和项目推动能力；\n4. 目标导向、执行力强；\n5. 相关行业或项目经验优先。"
+  description: "负责核心业务或项目，制定策略并推动落地，通过用户与业务数据分析持续优化关键指标，联动产品、研发、设计等团队推进项目并完成效果复盘。希望你具备相关岗位经验，熟悉业务方法和工作流程，拥有良好的数据分析、沟通协作与项目推动能力，目标导向、执行力强，具备相关行业或项目经验者优先。"
 };
 
-function compact(text: string, limit: number) {
-  const clean = text.replace(/\r/g, "").trim();
-  if (!clean) return [];
-  const parts = clean.split(/\n+|(?=\d+[.、])/).map(x => x.trim()).filter(Boolean);
-  return parts.slice(0, limit).map((x, i) => {
-    const body = x.replace(/^\d+[.、]\s*/, "").replace(/[；;。]+$/, "");
-    const short = body.length > 48 ? body.slice(0, 47).replace(/[，、][^，、]*$/, "") + "…" : body;
-    return `${i + 1}. ${short}${i === Math.min(parts.length, limit) - 1 ? "。" : "；"}`;
-  });
-}
-
-function conciseItems(items: string[], limit = 42) {
-  return items.map((item, i) => {
-    const body = item.replace(/^\d+\.\s*/, "").replace(/[；;。]+$/, "");
-    if (body.length <= limit) return `${i + 1}. ${body}${i === items.length - 1 ? "。" : "；"}`;
-    return `${i + 1}. ${body.slice(0, limit)}…`;
-  });
+function paragraph(text: string) {
+  return text.replace(/\r/g, "").split(/\n+/).map(x => x.trim().replace(/^\d+[.、]\s*/, "").replace(/[；;]+$/, "")).filter(Boolean).join("；");
 }
 
 export default function Home() {
@@ -48,16 +32,13 @@ export default function Home() {
   const [format, setFormat] = useState("story");
   const [form, setForm] = useState({
     job: "产品运营", department: "创新产品研发部", city: "北京", level: "P6",
-    intro: departments["创新产品研发部"], duties: samples.duties, requirements: samples.requirements,
+    intro: departments["创新产品研发部"], description: samples.description,
     highlight1: "京东健康App核心增长", highlight2: "覆盖多元健康场景", highlight3: "增长策略完整闭环",
     contact: "wangcongmeng.1", email: "wangcongmeng.1@jd.com"
   });
   const [busy, setBusy] = useState("");
-  const duties = useMemo(() => compact(form.duties, 4), [form.duties]);
-  const requirements = useMemo(() => compact(form.requirements, 6), [form.requirements]);
-  const feedDuties = useMemo(() => conciseItems(duties.slice(0, 4)), [duties]);
-  const feedRequirements = useMemo(() => conciseItems(requirements.slice(0, 4)), [requirements]);
-  const feedDense = useMemo(() => [...feedDuties, ...feedRequirements].some(x => x.replace(/^\d+\.\s*/, "").length > 36), [feedDuties, feedRequirements]);
+  const description = useMemo(() => paragraph(form.description), [form.description]);
+  const descriptionDense = description.length > (format === "story" ? 240 : format === "feed" ? 160 : 90);
   const highlights = useMemo(() => [form.highlight1, form.highlight2, form.highlight3].map(x => x.trim()).filter(Boolean), [form.highlight1, form.highlight2, form.highlight3]);
   const update = (key: string, value: string) => setForm(v => ({ ...v, [key]: value }));
   const selectDepartment = (name: string) => setForm(v => ({ ...v, department: name, intro: departments[name] || v.intro }));
@@ -101,16 +82,13 @@ export default function Home() {
       s.addShape(pptx.ShapeType.line,{x:.6,y:2.7,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
       addHighlights(2.9);
       if (format === "feed") {
-        const feedFont = feedDense ? 10 : 11;
-        badge("岗位职责",.6,4.05); text(feedDuties.join("\n"),.6,4.55,6.1,1.08,feedFont,"666A73");
-        badge("任职要求",.6,5.78); text(feedRequirements.join("\n"),.6,6.28,6.1,1.08,feedFont,"666A73");
+        badge("岗位介绍&要求",.6,4.05,2.15); text(description,.6,4.65,6.1,2.7,descriptionDense?10:11,"666A73");
         s.addShape(pptx.ShapeType.roundRect,{x:.6,y:8.1,w:6.25,h:1.15,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
         text("投递方式",.92,8.28,1.4,.25,16,"FFFFFF",true); text("内部活水候选人优先",4.8,8.28,1.65,.22,10,"FFB3AE",true,"right");
         text(`京ME联系：${form.contact}`,.92,8.63,3.6,.24,13,"FFFFFF",true); text(`简历请发送至：${form.email}`,.92,8.94,5.3,.2,10,"DADCE0");
         text("让每一次流动，都通往更适合的位置",.6,9.62,6.25,.22,10,"666A73",false,"center");
       } else {
-        const squareDuties = duties.slice(0,2).map(x => x.replace(/^\d+\.\s*/, "").replace(/[，。；]+$/, "")).join("；") + "。";
-        badge("岗位职责",.6,4.05); text(squareDuties,.6,4.58,6.1,.72,11,"666A73");
+        badge("岗位介绍&要求",.6,4.05,2.15); text(description,.6,4.58,6.1,.78,descriptionDense?9:10,"666A73");
         s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:6.25,h:1.05,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
         text("投递方式",.9,5.78,1.35,.24,15,"FFFFFF",true); text("内部活水候选人优先",4.8,5.78,1.65,.2,9,"FFB3AE",true,"right");
         text(`京ME联系：${form.contact}`,.9,6.1,3.5,.22,12,"FFFFFF",true); text(`简历请发送至：${form.email}`,.9,6.38,5.3,.18,9,"DADCE0");
@@ -122,8 +100,7 @@ export default function Home() {
     text(form.job,.62,2.14,5.8,.68,36,"202124",true); text(`${form.department}  ·  ${form.city}  ·  ${form.level}`,.65,2.95,5.8,.28,15,"666A73");
     s.addShape(pptx.ShapeType.line,{x:.6,y:3.38,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:3.7,w:6.25,h:1.55,rectRadius:.1,fill:{color:"FFFFFF"},line:{color:"E9E4E1",width:1}}); text(`关于${form.department}`,.95,3.95,3.8,.28,17,red,true); text(form.intro,.95,4.28,5.5,.78,14,"202124");
-    s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:1.65,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("岗位职责",.6,5.62,1.65,.48,19,red,true,"center"); text(duties.join("\n"),.6,6.3,5.95,1.65,14,"666A73");
-    s.addShape(pptx.ShapeType.roundRect,{x:.6,y:8.18,w:1.65,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("任职要求",.6,8.18,1.65,.48,19,red,true,"center"); text(requirements.join("\n"),.6,8.86,5.95,1.75,14,"666A73");
+    s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:2.25,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("岗位介绍&要求",.6,5.62,2.25,.48,19,red,true,"center"); text(description,.6,6.3,5.95,3.9,descriptionDense?12:14,"666A73");
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:10.85,w:6.25,h:1.35,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}}); text("投递方式",.95,11.05,1.5,.3,18,"FFFFFF",true); text("内部活水候选人优先",4.75,11.05,1.65,.25,11,"FFB3AE",true,"right"); text(`京ME联系：${form.contact}`,.95,11.43,3.5,.28,15,"FFFFFF",true); text(`简历请发送至：${form.email}`,.95,11.78,5.5,.22,11,"DADCE0"); text("让每一次流动，都通往更适合的位置",.6,12.82,6.25,.25,11,"666A73",false,"center");
     await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}-${formatName}.pptx` }); setBusy("");
   }
@@ -138,8 +115,7 @@ export default function Home() {
           <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
           {format === "story" && <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>}
           <div className="field highlight-fields"><span>岗位亮点 <em>每条最多 12 个字</em></span><div><HighlightField index={1} value={form.highlight1} onChange={v=>update("highlight1",v)}/><HighlightField index={2} value={form.highlight2} onChange={v=>update("highlight2",v)}/><HighlightField index={3} value={form.highlight3} onChange={v=>update("highlight3",v)}/></div></div>
-          <label className="field"><span>岗位职责 <em>{format === "square" ? "精简展示，最多提取 2 条" : format === "feed" ? "展示 4 条，每条建议不超过 40 字" : "最多提取 4 条"}</em></span><textarea rows={format === "square" ? 4 : 7} value={form.duties} onChange={e=>update("duties",e.target.value)}/></label>
-          {format !== "square" && <label className="field"><span>任职要求 <em>{format === "feed" ? "展示 4 条，每条建议不超过 40 字" : "最多提取 6 条"}</em></span><textarea rows={7} value={form.requirements} onChange={e=>update("requirements",e.target.value)}/></label>}
+          <label className="field"><span>岗位介绍&要求 <em>{format === "story" ? "建议不超过 300 字" : format === "feed" ? "建议不超过 200 字" : "建议不超过 100 字"}</em></span><textarea rows={format === "square" ? 5 : 9} value={form.description} onChange={e=>update("description",e.target.value)} placeholder="请综合描述岗位工作内容、岗位价值及任职要求，无需分条。"/></label>
           <details><summary>投递信息</summary><div className="grid-fields compact"><Field label="京ME联系人" value={form.contact} onChange={v=>update("contact",v)}/><Field label="投递邮箱" value={form.email} onChange={v=>update("email",v)}/></div></details>
         </aside>
         <section className="preview-zone"><div className="preview-head"><div><span className="step">02</span><h2>成品预览</h2></div><span className="scale-note">不同尺寸会自动调整信息密度</span></div>
@@ -149,7 +125,7 @@ export default function Home() {
             <button className={format === "square" ? "selected" : ""} onClick={()=>setFormat("square")}><b>1:1</b><span>群聊卡片</span></button>
           </div>
           <div className={`poster-stage ${format}`}>
-            <Poster ref={posterRef} form={form} duties={format === "feed" ? feedDuties : duties} requirements={format === "feed" ? feedRequirements : requirements} highlights={highlights} template={template} format={format} dense={feedDense}/>
+            <Poster ref={posterRef} form={form} description={description} highlights={highlights} template={template} format={format} dense={descriptionDense}/>
           </div>
           <div className="actions"><button className="secondary" onClick={downloadPpt} disabled={!!busy}>{busy==="ppt"?"正在生成…":"下载当前尺寸 PPT"}</button><button className="primary" onClick={downloadPng} disabled={!!busy}>{busy==="png"?"正在生成…":"下载 PNG 海报"}</button></div>
         </section>
@@ -162,21 +138,10 @@ function Field({label,value,onChange}:{label:string,value:string,onChange:(v:str
 
 function HighlightField({index,value,onChange}:{index:number,value:string,onChange:(v:string)=>void}){return <label><span>{index}</span><input maxLength={12} value={value} onChange={e=>onChange(e.target.value)} placeholder={`亮点 ${index}`}/><small>{value.length}/12</small></label>}
 
-const Poster = ({ref,form,duties,requirements,highlights,template,format,dense=false}:{ref:React.Ref<HTMLDivElement>,form:any,duties:string[],requirements:string[],highlights:string[],template:string,format:string,dense?:boolean}) => <div ref={ref} className={`poster ${template} ${format}${dense ? " dense" : ""}`}>
+const Poster = ({ref,form,description,highlights,template,format,dense=false}:{ref:React.Ref<HTMLDivElement>,form:any,description:string,highlights:string[],template:string,format:string,dense?:boolean}) => <div ref={ref} className={`poster ${template} ${format}${dense ? " dense" : ""}`}>
   <div className="orbit"><b/></div><div className="poster-brand">京东健康</div><div className="poster-tag">内部活水岗位</div><div className="hero-title">{form.job||"岗位名称"}</div><div className="meta">{form.department}　·　{form.city}　·　{form.level}</div><div className="divider"/>
   <div className="intro-card"><h3>关于{form.department}</h3><p>{form.intro}</p></div>
   {highlights.length > 0 && <div className="highlight-card"><h3>岗位亮点</h3><div>{highlights.map((x,i)=><span key={i}><b>{String(i + 1).padStart(2, "0")}</b><em>{x}</em></span>)}</div></div>}
-  {format === "feed" ? <div className="feed-details">
-    <PosterSection title="岗位职责" items={duties.slice(0, 4)}/>
-    <PosterSection title="任职要求" items={requirements.slice(0, 4)}/>
-  </div> : <>
-    <PosterSection title="岗位职责" items={format === "story" ? duties : duties.slice(0, 2)} paragraph={format === "square"}/>
-    {format !== "square" && <PosterSection title="任职要求" items={requirements}/>}
-  </>}
+  <section className="poster-section unified"><h3>岗位介绍&要求</h3><p>{description}</p></section>
   <div className="apply-card"><div className="apply-top"><h3>投递方式</h3><b>内部活水候选人优先</b></div><h4>京ME联系：{form.contact}</h4><p>简历请发送至：{form.email}</p></div><footer>让每一次流动，都通往更适合的位置</footer>
 </div>;
-
-function PosterSection({title,items,paragraph=false}:{title:string,items:string[],paragraph?:boolean}){
-  const cleanItems = items.map(x => x.replace(/^\d+\.\s*/, "").replace(/[，。；]+$/, ""));
-  return <section className={`poster-section${paragraph ? " paragraph" : ""}`}><h3>{title}</h3>{paragraph ? <p>{cleanItems.join("；")}。</p> : <ol>{items.map((x,i)=><li key={i}>{x.replace(/^\d+\.\s*/,"")}</li>)}</ol>}</section>
-}
