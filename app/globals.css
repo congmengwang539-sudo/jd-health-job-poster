@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 body .poster .poster-section.unified p{margin:0;color:#6b707b;text-align:left;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
-body .poster.poster.story .poster-section.unified{min-height:0!important;max-height:220px;overflow:hidden}
-body .poster.poster.story .poster-section.unified p{font-size:8.2px;line-height:1.55;-webkit-line-clamp:14}
-body .poster.poster.story.dense .poster-section.unified p{font-size:7.5px;line-height:1.48}
+body .poster.poster.story .poster-section.unified{position:absolute;left:32px;right:32px;top:400px;bottom:145px;min-height:0!important;max-height:none;margin:0!important;padding:12px 15px;background:#fff;border:1px solid #e8e2df;border-radius:11px;overflow:hidden}
+body .poster.poster.story .poster-section.unified h3{margin-bottom:9px!important}
+body .poster.poster.story .poster-section.unified p{font-size:8.6px;line-height:1.62;-webkit-line-clamp:11}
+body .poster.poster.story.dense .poster-section.unified p{font-size:7.7px;line-height:1.52}
 body .poster.poster.feed .poster-section.unified{position:absolute;left:32px;right:32px;top:264px;bottom:118px;margin:0!important;min-height:0!important;overflow:hidden}
 body .poster.poster.feed .poster-section.unified p{font-size:7.35px;line-height:1.5;-webkit-line-clamp:11}
 body .poster.poster.feed.dense .poster-section.unified p{font-size:6.85px;line-height:1.42}

@@ -100,7 +100,8 @@ export default function Home() {
     text(form.job,.62,2.14,5.8,.68,36,"202124",true); text(`${form.department}  ·  ${form.city}  ·  ${form.level}`,.65,2.95,5.8,.28,15,"666A73");
     s.addShape(pptx.ShapeType.line,{x:.6,y:3.38,w:6.25,h:0,line:{color:"E9E4E1",width:1}});
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:3.7,w:6.25,h:1.55,rectRadius:.1,fill:{color:"FFFFFF"},line:{color:"E9E4E1",width:1}}); text(`关于${form.department}`,.95,3.95,3.8,.28,17,red,true); text(form.intro,.95,4.28,5.5,.78,14,"202124");
-    s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:2.25,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("岗位介绍&要求",.6,5.62,2.25,.48,19,red,true,"center"); text(description,.6,6.3,5.95,3.9,descriptionDense?12:14,"666A73");
+    s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.55,w:6.25,h:4.72,rectRadius:.12,fill:{color:"FFFFFF"},line:{color:"E9E4E1",width:1}});
+    s.addShape(pptx.ShapeType.roundRect,{x:.9,y:5.86,w:2.25,h:.48,rectRadius:.12,fill:{color:"FFE9E7"},line:{color:"F6C9C5",width:1}}); text("岗位介绍&要求",.9,5.86,2.25,.48,19,red,true,"center"); text(description,.9,6.62,5.65,3.25,descriptionDense?12:14,"666A73");
     s.addShape(pptx.ShapeType.roundRect,{x:.6,y:10.85,w:6.25,h:1.35,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}}); text("投递方式",.95,11.05,1.5,.3,18,"FFFFFF",true); text("内部活水候选人优先",4.75,11.05,1.65,.25,11,"FFB3AE",true,"right"); text(`京ME联系：${form.contact}`,.95,11.43,3.5,.28,15,"FFFFFF",true); text(`简历请发送至：${form.email}`,.95,11.78,5.5,.22,11,"DADCE0"); text("让每一次流动，都通往更适合的位置",.6,12.82,6.25,.25,11,"666A73",false,"center");
     await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}-${formatName}.pptx` }); setBusy("");
   }
