@@ -88,11 +88,10 @@ export default function Home() {
         text(`京ME联系：${form.contact}`,.92,8.63,3.6,.24,13,"FFFFFF",true); text(`简历请发送至：${form.email}`,.92,8.94,5.3,.2,10,"DADCE0");
         text("让每一次流动，都通往更适合的位置",.6,9.62,6.25,.22,10,"666A73",false,"center");
       } else {
-        badge("岗位介绍&要求",.6,4.05,2.15); text(description,.6,4.58,6.1,.78,descriptionDense?9:10,"666A73");
-        s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.62,w:6.25,h:1.05,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
-        text("投递方式",.9,5.78,1.35,.24,15,"FFFFFF",true); text("内部活水候选人优先",4.8,5.78,1.65,.2,9,"FFB3AE",true,"right");
-        text(`京ME联系：${form.contact}`,.9,6.1,3.5,.22,12,"FFFFFF",true); text(`简历请发送至：${form.email}`,.9,6.38,5.3,.18,9,"DADCE0");
-        text("让每一次流动，都通往更适合的位置",.6,7.12,6.25,.2,9,"666A73",false,"center");
+        s.addShape(pptx.ShapeType.roundRect,{x:.6,y:5.08,w:6.25,h:1.15,rectRadius:.1,fill:{color:"202124"},line:{color:"202124"}});
+        text("投递方式",.9,5.26,1.35,.24,15,"FFFFFF",true); text("内部活水候选人优先",4.8,5.26,1.65,.2,9,"FFB3AE",true,"right");
+        text(`京ME联系：${form.contact}`,.9,5.6,3.5,.22,12,"FFFFFF",true); text(`简历请发送至：${form.email}`,.9,5.9,5.3,.18,9,"DADCE0");
+        text("让每一次流动，都通往更适合的位置",.6,6.92,6.25,.2,9,"666A73",false,"center");
       }
       await pptx.writeFile({ fileName: `京东健康-${form.job}-${form.level}-${formatName}.pptx` }); setBusy(""); return;
     }
@@ -116,7 +115,7 @@ export default function Home() {
           <div className="grid-fields"><Field label="岗位名称" value={form.job} onChange={v=>update("job",v)}/><Field label="职级" value={form.level} onChange={v=>update("level",v)}/><Field label="工作地点" value={form.city} onChange={v=>update("city",v)}/><label className="field"><span>部门名称</span><select value={form.department} onChange={e=>selectDepartment(e.target.value)}>{Object.keys(departments).map(x=><option key={x}>{x}</option>)}</select></label></div>
           {format === "story" && <label className="field"><span>部门介绍 <em>已自动匹配，可编辑</em></span><textarea rows={4} value={form.intro} onChange={e=>update("intro",e.target.value)}/></label>}
           <div className="field highlight-fields"><span>岗位亮点 <em>每条最多 12 个字</em></span><div><HighlightField index={1} value={form.highlight1} onChange={v=>update("highlight1",v)}/><HighlightField index={2} value={form.highlight2} onChange={v=>update("highlight2",v)}/><HighlightField index={3} value={form.highlight3} onChange={v=>update("highlight3",v)}/></div></div>
-          <label className="field"><span>岗位介绍&要求 <em>{format === "story" ? "建议不超过 300 字" : format === "feed" ? "建议不超过 200 字" : "建议不超过 100 字"}</em></span><textarea rows={format === "square" ? 5 : 9} value={form.description} onChange={e=>update("description",e.target.value)} placeholder="请综合描述岗位工作内容、岗位价值及任职要求，无需分条。"/></label>
+          {format !== "square" && <label className="field"><span>岗位介绍&要求 <em>{format === "story" ? "建议不超过 300 字" : "建议不超过 200 字"}</em></span><textarea rows={9} value={form.description} onChange={e=>update("description",e.target.value)} placeholder="请综合描述岗位工作内容、岗位价值及任职要求，无需分条。"/></label>}
           <details><summary>投递信息</summary><div className="grid-fields compact"><Field label="京ME联系人" value={form.contact} onChange={v=>update("contact",v)}/><Field label="投递邮箱" value={form.email} onChange={v=>update("email",v)}/></div></details>
         </aside>
         <section className="preview-zone"><div className="preview-head"><div><span className="step">02</span><h2>成品预览</h2></div><span className="scale-note">不同尺寸会自动调整信息密度</span></div>
@@ -143,6 +142,6 @@ const Poster = ({ref,form,description,highlights,template,format,dense=false}:{r
   <div className="orbit"><b/></div><div className="poster-brand">京东健康</div><div className="poster-tag">内部活水岗位</div><div className="hero-title">{form.job||"岗位名称"}</div><div className="meta">{form.department}　·　{form.city}　·　{form.level}</div><div className="divider"/>
   <div className="intro-card"><h3>关于{form.department}</h3><p>{form.intro}</p></div>
   {highlights.length > 0 && <div className="highlight-card"><h3>岗位亮点</h3><div>{highlights.map((x,i)=><span key={i}><b>{String(i + 1).padStart(2, "0")}</b><em>{x}</em></span>)}</div></div>}
-  <section className="poster-section unified"><h3>岗位介绍&要求</h3><p>{description}</p></section>
+  {format !== "square" && <section className="poster-section unified"><h3>岗位介绍&要求</h3><p>{description}</p></section>}
   <div className="apply-card"><div className="apply-top"><h3>投递方式</h3><b>内部活水候选人优先</b></div><h4>京ME联系：{form.contact}</h4><p>简历请发送至：{form.email}</p></div><footer>让每一次流动，都通往更适合的位置</footer>
 </div>;
